@@ -1,0 +1,20 @@
+services:
+  traefik:
+    image: traefik:2.11.4
+    container_name: traefik
+    restart: always
+    ports:
+      - "80:80"   # Der HTTP Port
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro" # Traefik kann auf Docker zugreifen
+      - "./traefik.yaml:/traefik.yaml:ro" # Traefik Konfigurationsdatei
+    networks:
+      - traefik_proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik-dashboard.rule=Host(`traefik.rpi.local`)"
+      - "traefik.http.routers.traefik-dashboard.service=api@internal"
+      - "traefik.http.routers.traefik-dashboard.entrypoints=http"
+networks:
+  traefik_proxy:
+    name: traefik_proxy
